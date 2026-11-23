@@ -1,0 +1,6 @@
+{
+  "name": "PRMSC Asset Registry",
+  "description": "Punjab Rural Municipal Services Company hardware inventory, employee issuance, and return tracking portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

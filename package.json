@@ -1,0 +1,12 @@
+{
+  "name": "prmsc-asset-registry",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "node --check app.js && node --check server.js",
+    "start": "node server.js",
+    "lint": "node --check app.js && node --check server.js"
+  }
+}

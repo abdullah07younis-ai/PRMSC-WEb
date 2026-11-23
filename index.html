@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRMSC — Punjab Rural Municipal Services Company</title>
+    <meta
+      name="description"
+      content="Punjab Rural Municipal Services Company hardware inventory, employee issuance, and return tracking portal."
+    />
+    <meta property="og:title" content="PRMSC — Punjab Rural Municipal Services Company" />
+    <meta
+      property="og:description"
+      content="Punjab Rural Municipal Services Company hardware inventory, employee issuance, and return tracking portal."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- =========================================================
+         FRONT PAGE: LOGIN & PASSWORD GATE
+    ========================================================== -->
+    <section id="login-view" class="login-shell">
+      <div class="login-hero">
+        <img
+          src="assets/prmsc_office_hero.jpg"
+          alt="Punjab Rural Municipal Services Company office workspace"
+          class="login-hero-img"
+          referrerpolicy="no-referrer"
+          onerror="this.style.display='none'"
+        />
+        <div class="login-hero-scrim"></div>
+        <div class="login-hero-content">
+          <p class="hero-kicker">Authorized Personnel Portal</p>
+          <h1 class="hero-title">Punjab Rural Municipal Services Company</h1>
+          <p class="hero-subtitle">
+            Centralized hardware inventory registry for issuing company laptops and desktops to
+            PRMSC employees and tracking asset returns with clarity.
+          </p>
+        </div>
+      </div>
+
+      <div class="login-panel">
+        <div class="login-box">
+          <div class="brand-mark">
+            <span class="brand-emblem" aria-hidden="true">P</span>
+            <div>
+              <span class="brand-short">PRMSC</span>
+              <span class="brand-full">Punjab Rural Municipal Services Company</span>
+            </div>
+          </div>
+
+          <h2 id="auth-heading" class="auth-heading">Administrator Sign In</h2>
+          <p id="auth-subheading" class="auth-subheading">
+            Enter your login ID and password to access hardware stock, employee issuance, and
+            return history.
+          </p>
+
+          <div id="auth-notice" class="alert alert-success hidden" role="status"></div>
+          <div id="auth-error" class="alert alert-error hidden" role="alert"></div>
+
+          <form id="auth-form" class="form-stack" novalidate>
+            <div class="field-group">
+              <label for="login-input" class="field-label">Login ID</label>
+              <input
+                id="login-input"
+                type="text"
+                class="text-input"
+                autocomplete="username"
+                placeholder="Enter administrator login ID"
+                required
+              />
+            </div>
+
+            <div class="field-group">
+              <label for="password-input" class="field-label">Password</label>
+              <div class="password-wrap">
+                <input
+                  id="password-input"
+                  type="password"
+                  class="text-input has-toggle"
+                  autocomplete="current-password"
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  id="toggle-password-btn"
+                  class="password-toggle-btn"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+            </div>
+
+            <div id="confirm-password-group" class="field-group hidden">
+              <label for="confirm-password-input" class="field-label">Confirm Password</label>
+              <input
+                id="confirm-password-input"
+                type="password"
+                class="text-input"
+                autocomplete="new-password"
+                placeholder="Re-enter password to confirm"
+              />
+            </div>
+
+            <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block">
+              Sign In to Portal
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <p class="login-note">
+              Access is restricted to authorized PRMSC staff. Incorrect credentials will keep this
+              gate locked.
+            </p>
+            <button type="button" id="reset-creds-link" class="text-link-btn hidden">
+              Forgot or reset portal login credentials?
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         AUTHENTICATED WORKSPACE
+    ========================================================== -->
+    <div id="app-view" class="app-shell hidden">
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="container topbar-inner">
+          <div class="topbar-brand">
+            <span class="brand-emblem brand-emblem-sm" aria-hidden="true">P</span>
+            <span class="topbar-wordmark">PRMSC</span>
+          </div>
+
+          <nav class="topbar-nav" aria-label="Primary navigation">
+            <button
+              type="button"
+              id="nav-inventory-btn"
+              class="nav-tab is-active"
+              data-tab="inventory"
+            >
+              Inventory &amp; Issue
+            </button>
+            <button
+              type="button"
+              id="nav-history-btn"
+              class="nav-tab"
+              data-tab="history"
+            >
+              Issuance &amp; Return History
+            </button>
+          </nav>
+
+          <div class="topbar-actions">
+            <span id="signed-in-user" class="signed-in-label"></span>
+            <button type="button" id="sign-out-btn" class="btn btn-outline btn-sm">
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Institutional Subheader & KPI Strip -->
+      <section class="summary-band">
+        <div class="container summary-inner">
+          <div>
+            <h1 class="org-title">Punjab Rural Municipal Services Company</h1>
+            <p class="org-subtitle">
+              IT Hardware Asset Registry — Laptops &amp; Desktops Management
+            </p>
+          </div>
+
+          <div class="kpi-strip">
+            <div class="kpi-cell">
+              <span class="kpi-label">Total Stock</span>
+              <span id="kpi-total" class="kpi-value">0</span>
+            </div>
+            <div class="kpi-cell">
+              <span class="kpi-label">Issued Out</span>
+              <span id="kpi-issued" class="kpi-value kpi-muted">0</span>
+            </div>
+            <div class="kpi-cell">
+              <span class="kpi-label">Available</span>
+              <span id="kpi-available" class="kpi-value kpi-accent">0</span>
+            </div>
+            <div class="kpi-cell">
+              <span class="kpi-label">Active Holdings</span>
+              <span id="kpi-active" class="kpi-value">0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Viewport -->
+      <main class="container main-content">
+        <div id="workspace-feedback" class="alert hidden" role="status"></div>
+
+        <!-- =====================================================
+             SIDE 1: INVENTORY, FIX QUANTITIES, ISSUE & RETURN
+        ====================================================== -->
+        <section id="tab-inventory" class="workspace-section">
+          <!-- Total Quantity Setup Card -->
+          <div id="fix-quantities-panel" class="card setup-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Step 1: Enter &amp; Fix Total Quantities</h2>
+                <p class="card-subtitle">
+                  Enter the total quantities for all three laptop types (i3, i5, i7) and all three
+                  desktop types. Once fixed, issuing hardware to PRMSC employees is enabled.
+                </p>
+              </div>
+            </div>
+            <form id="fix-quantities-form" class="setup-form">
+              <div id="fix-quantities-grid" class="setup-grid"></div>
+              <div class="setup-actions">
+                <button type="submit" class="btn btn-primary">Fix Total Quantities</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Split Layout: Hardware Cards (Left) + Issue Form (Right) -->
+          <div class="workspace-grid">
+            <div class="inventory-column">
+              <!-- Laptops Section -->
+              <div class="category-block">
+                <div class="section-head">
+                  <div>
+                    <h2 class="section-title">Laptops (Core i3, Core i5, Core i7)</h2>
+                    <p class="section-subtitle">Three standard PRMSC portable workstation tiers</p>
+                  </div>
+                  <span id="laptops-available-count" class="section-count">0 available</span>
+                </div>
+                <div id="laptops-grid" class="hardware-grid"></div>
+              </div>
+
+              <!-- Desktops Section -->
+              <div class="category-block">
+                <div class="section-head">
+                  <div>
+                    <h2 class="section-title">Desktops (Three Configurations)</h2>
+                    <p class="section-subtitle">Three standard PRMSC office desktop tiers</p>
+                  </div>
+                  <span id="desktops-available-count" class="section-count">0 available</span>
+                </div>
+                <div id="desktops-grid" class="hardware-grid"></div>
+              </div>
+            </div>
+
+            <!-- Right Column: Issue to PRMSC Employee -->
+            <aside class="card issue-panel">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow-text">Company Employees Only</p>
+                  <h2 class="card-title">Issue Hardware to Employee</h2>
+                  <p class="card-subtitle">
+                    Issuing subtracts from total available units. Both Employee Name and Designation
+                    are required.
+                  </p>
+                </div>
+              </div>
+
+              <form id="issue-form" class="form-stack">
+                <div class="field-group">
+                  <label for="issue-item-select" class="field-label">Select Laptop or Desktop</label>
+                  <select id="issue-item-select" class="text-input"></select>
+                </div>
+
+                <div class="field-group">
+                  <label for="issue-employee-name" class="field-label">Employee Name</label>
+                  <input
+                    id="issue-employee-name"
+                    type="text"
+                    class="text-input"
+                    placeholder="Write employee full name"
+                    required
+                  />
+                </div>
+
+                <div class="field-group">
+                  <label for="issue-designation" class="field-label">Designation</label>
+                  <input
+                    id="issue-designation"
+                    type="text"
+                    class="text-input"
+                    placeholder="Write employee designation"
+                    required
+                  />
+                </div>
+
+                <div class="field-group">
+                  <label for="issue-quantity" class="field-label">Quantity to Issue</label>
+                  <input
+                    id="issue-quantity"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="1"
+                    class="text-input mono-input"
+                    required
+                  />
+                </div>
+
+                <label class="checkbox-row">
+                  <input id="issue-employee-confirm" type="checkbox" checked />
+                  <span>
+                    Confirm recipient is an active employee of Punjab Rural Municipal Services
+                    Company (PRMSC).
+                  </span>
+                </label>
+
+                <button type="submit" id="issue-submit-btn" class="btn btn-primary btn-block">
+                  Submit Issuance
+                </button>
+              </form>
+            </aside>
+          </div>
+
+          <!-- Active Issued Hardware & Return Desk -->
+          <section class="card table-card">
+            <div class="table-card-head">
+              <div>
+                <h2 class="card-title">Currently Issued Items &amp; Return Desk</h2>
+                <p class="card-subtitle">
+                  Return any issued item to add it back to inventory and update total available data.
+                </p>
+              </div>
+              <button type="button" id="jump-to-history-btn" class="btn btn-outline btn-sm">
+                View Full History &rarr;
+              </button>
+            </div>
+
+            <div id="active-issuances-empty" class="empty-state hidden">
+              <p class="empty-title">No hardware currently issued to employees</p>
+              <p class="empty-copy">
+                Fix total stock quantities and submit an issuance to see active employee holdings
+                here.
+              </p>
+            </div>
+
+            <div id="active-issuances-wrap" class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Record ID</th>
+                    <th>Employee Name</th>
+                    <th>Designation</th>
+                    <th>Hardware Item</th>
+                    <th class="num-col">Qty Held</th>
+                    <th>Issued Date</th>
+                    <th class="action-col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="active-issuances-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <!-- =====================================================
+             SIDE 2: ISSUANCE & RETURN HISTORY
+        ====================================================== -->
+        <section id="tab-history" class="workspace-section hidden">
+          <div class="history-top">
+            <div>
+              <h2 class="section-title">Employee Issuance &amp; Return History</h2>
+              <p class="section-subtitle">
+                Complete log of PRMSC employees who were issued items, returned items, and stock
+                quantity updates.
+              </p>
+            </div>
+            <div class="history-top-actions">
+              <button type="button" id="export-csv-btn" class="btn btn-outline btn-sm">
+                Download CSV
+              </button>
+              <button type="button" id="back-to-inventory-btn" class="btn btn-primary btn-sm">
+                Back to Inventory
+              </button>
+            </div>
+          </div>
+
+          <div class="history-toolbar">
+            <div class="segmented-bar" role="group" aria-label="Filter history by action">
+              <button type="button" class="seg-btn is-active" data-filter="All">All</button>
+              <button type="button" class="seg-btn" data-filter="Issued">Issued</button>
+              <button type="button" class="seg-btn" data-filter="Returned">Returned</button>
+              <button type="button" class="seg-btn" data-filter="Stock Updated">
+                Stock Updates
+              </button>
+            </div>
+
+            <input
+              id="history-search-input"
+              type="search"
+              class="text-input search-input"
+              placeholder="Search employee name, designation, or item..."
+              aria-label="Search history records"
+            />
+          </div>
+
+          <div class="card table-card">
+            <div id="history-empty" class="empty-state hidden">
+              <p class="empty-title">No history entries match your view</p>
+              <p class="empty-copy">
+                Issuances, returns, and stock updates will be logged here automatically.
+              </p>
+            </div>
+
+            <div id="history-table-wrap" class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Activity</th>
+                    <th>Employee / Source</th>
+                    <th>Designation</th>
+                    <th>Hardware Item</th>
+                    <th class="num-col">Qty</th>
+                    <th class="num-col">Available After</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- =========================================================
+         MODAL: ADD / UPDATE STOCK QUANTITIES
+    ========================================================== -->
+    <div id="stock-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h3 id="stock-modal-title" class="modal-title">Update Stock</h3>
+            <p id="stock-modal-meta" class="modal-subtitle"></p>
+          </div>
+          <button type="button" id="close-stock-modal-btn" class="modal-close" aria-label="Close">
+            &times;
+          </button>
+        </div>
+
+        <form id="stock-modal-form" class="form-stack">
+          <div class="segmented-bar segmented-full">
+            <button type="button" id="mode-add-btn" class="seg-btn is-active">Add New Units</button>
+            <button type="button" id="mode-set-btn" class="seg-btn">Set Total Stock</button>
+          </div>
+
+          <div class="field-group">
+            <label id="stock-modal-label" for="stock-modal-amount" class="field-label">
+              Units to Add
+            </label>
+            <input
+              id="stock-modal-amount"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+              class="text-input mono-input"
+              required
+            />
+            <p id="stock-modal-hint" class="field-hint"></p>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="cancel-stock-modal-btn" class="btn btn-outline">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL: RETURN ISSUED ITEM
+    ========================================================== -->
+    <div id="return-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h3 class="modal-title">Return Hardware to Inventory</h3>
+            <p id="return-modal-meta" class="modal-subtitle"></p>
+          </div>
+          <button type="button" id="close-return-modal-btn" class="modal-close" aria-label="Close">
+            &times;
+          </button>
+        </div>
+
+        <form id="return-modal-form" class="form-stack">
+          <div class="return-summary-box">
+            <p id="return-item-name" class="return-item-title"></p>
+            <p id="return-item-held" class="return-item-meta"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="return-modal-qty" class="field-label">Quantity Returning</label>
+            <input
+              id="return-modal-qty"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+              class="text-input mono-input"
+              required
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="cancel-return-modal-btn" class="btn btn-outline">Cancel</button>
+            <button type="submit" class="btn btn-primary">Confirm Return</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
